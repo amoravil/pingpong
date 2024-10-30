@@ -3,5 +3,8 @@
     "C_Cpp.default.configurationProvider": "particle.particle-vscode-core",
     "files.associations": {
         "*.ino": "cpp"
-    }
+    },
+    "particle.targetDevice": "SBH9905",
+    "particle.targetPlatform": "electron",
+    "particle.firmwareVersion": "3.3.1"
 }
