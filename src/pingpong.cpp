@@ -17,50 +17,58 @@ SYSTEM_MODE(AUTOMATIC);
 
 // Run the application and system concurrently in separate threads
 SYSTEM_THREAD(ENABLED);
+
+// Set ellular credentials
 STARTUP(cellular_credentials_set("hologram", "", "", NULL));
 
 // Show system, cloud connectivity, and application logs over USB
 // View logs with CLI using 'particle serial monitor --follow'
 SerialLogHandler logHandler(LOG_LEVEL_INFO);
 
-// This function is called when the Particle.function is called
+// Set let D7 on/off
 int ledToggle(String command)
 {
     if (command.equals("on"))
     {
         digitalWrite(MY_LED, HIGH);
         Log.info("MY_LED = ON");
+        Particle.publish("ballStatus", "SBH9905");
         return 1;
     }
     else if (command.equals("off"))
     {
         digitalWrite(MY_LED, LOW);
         Log.info("MY_LED = OFF");
+        Particle.publish("ballStatus", "8FLJ829");
         return 0;
     }
     else
     {
-        // Unknown option
         Log.info("UNKNOWN OPTION");
         return -1;
     }
 }
-
-
-
+// Function called when the cloud tells us that an event is published.
+void myHandler(const char *event, const char *data)
+{
+    if (strcmp(data, "SBH9905") == 0)
+        {
+            Log.info("Playing SBH9905");
+        }
+        else if (strcmp(data, "8FLJ829") == 0)
+        {
+            Log.info("Playing 8FLJ829");
+        }
+        else
+        {
+            Log.info("UNKNOWN OPTION in event");
+        }
+}
 // setup() runs once, when the device is first turned on
 void setup() {
-    // In order to set a pin, you must tell Device OS that the
-    // pin is an OUTPUT pin.
-    // This is often done from setup() since you only need to
-    // do it once.
     pinMode(MY_LED, OUTPUT);
-
-    // This registers a function call. When the function "led"
-    // is called from the cloud, the ledToggle() function above
-    // will be called.
     Particle.function("led", ledToggle);
-  // Put initialization like pinMode and begin functions here
+    Particle.subscribe("ballStatus", myHandler);
 }
 
 // loop() runs over and over again, as quickly as it can execute.
