@@ -11,6 +11,7 @@
 #include "cellular_hal.h"
 
 const pin_t MY_LED = D7;
+bool published;
 
 // Let Device OS manage the connection to the Particle Cloud
 SYSTEM_MODE(AUTOMATIC);
@@ -32,14 +33,22 @@ int ledToggle(String command)
     {
         digitalWrite(MY_LED, HIGH);
         Log.info("MY_LED = ON");
-        Particle.publish("ballStatus", "SBH9905");
+        published = Particle.publish("ballStatus", "SBH9905");
+            if (!published)
+            {
+                Log.info("Message SBH9905 not published");
+            }
         return 1;
     }
     else if (command.equals("off"))
     {
         digitalWrite(MY_LED, LOW);
         Log.info("MY_LED = OFF");
-        Particle.publish("ballStatus", "8FLJ829");
+        published = Particle.publish("ballStatus", "8FLJ829");
+        if (!published)
+            {
+                Log.info("Message 8FLJ829 not published");
+            }        
         return 0;
     }
     else
