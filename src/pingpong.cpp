@@ -11,7 +11,10 @@
 #include "cellular_hal.h"
 
 const pin_t MY_LED = D7;
+const String MY_PLAYER = "SBH9905";
+const String PLAYER_2 = "8FLJ829";
 bool published;
+
 
 // Let Device OS manage the connection to the Particle Cloud
 SYSTEM_MODE(AUTOMATIC);
@@ -33,22 +36,12 @@ int ledToggle(String command)
     {
         digitalWrite(MY_LED, HIGH);
         Log.info("MY_LED = ON");
-        //published = Particle.publish("ballStatus", "SBH9905");
-        //    if (!published)
-        //    {
-        //        Log.info("Message SBH9905 not published");
-        //    }
         return 1;
     }
     else if (command.equals("off"))
     {
         digitalWrite(MY_LED, LOW);
         Log.info("MY_LED = OFF");
-        //published = Particle.publish("ballStatus", "8FLJ829");
-        //if (!published)
-        //    {
-        //        Log.info("Message 8FLJ829 not published");
-        //    }        
         return 0;
     }
     else
@@ -61,27 +54,27 @@ int ledToggle(String command)
 // Function called when the cloud tells us that an event is published.
 void myHandler(const char *event, const char *data)
 {
-    if (strcmp(data, "SBH9905") == 0)
+    if (strcmp(data, MY_PLAYER) == 0)
     {
         published = false;
         while (!published)
         {
             ledToggle("on");
-            Log.info("Playing SBH9905");
+            Log.info("Playing %s", (const char*)MY_PLAYER);
             delay( 5 * 1000 );
-            Log.info("Sending ball to 8FLJ829");
-            published = Particle.publish("ballStatus", "8FLJ829");
+            Log.info("Sending ball to %s", (const char*)PLAYER_2);
+            published = Particle.publish("ballStatus", PLAYER_2);
             if (!published) 
             {
-                Log.info("Fail publishing message to 8FLJ829");           
+                Log.info("Fail publishing message to %s", (const char*)PLAYER_2);           
             }
         }
         ledToggle("off");
-        Log.info("Should be playing 8FLJ829");
+        Log.info("Should be playing %s", (const char*)PLAYER_2);
     }
-    else if (strcmp(data, "8FLJ829") == 0)
+    else if (strcmp(data, PLAYER_2) == 0)
     {
-        Log.info("Playing 8FLJ829");
+        Log.info("Playing %s", (const char*)PLAYER_2);
     }
     else
     {
@@ -92,15 +85,12 @@ void myHandler(const char *event, const char *data)
 int getBall(String command)
 {
     bool play = false;
-    play = Particle.publish("ballStatus", "SBH9905");
+    play = Particle.publish("ballStatus", MY_PLAYER);
     if (!play)
-    {
-        return 1;
-    }
-    else
     {
         return -1;
     }
+    return 1;
 }
 
 // setup() runs once, when the device is first turned on
