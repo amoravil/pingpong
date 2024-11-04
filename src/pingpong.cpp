@@ -33,22 +33,22 @@ int ledToggle(String command)
     {
         digitalWrite(MY_LED, HIGH);
         Log.info("MY_LED = ON");
-        published = Particle.publish("ballStatus", "SBH9905");
-            if (!published)
-            {
-                Log.info("Message SBH9905 not published");
-            }
+        //published = Particle.publish("ballStatus", "SBH9905");
+        //    if (!published)
+        //    {
+        //        Log.info("Message SBH9905 not published");
+        //    }
         return 1;
     }
     else if (command.equals("off"))
     {
         digitalWrite(MY_LED, LOW);
         Log.info("MY_LED = OFF");
-        published = Particle.publish("ballStatus", "8FLJ829");
-        if (!published)
-            {
-                Log.info("Message 8FLJ829 not published");
-            }        
+        //published = Particle.publish("ballStatus", "8FLJ829");
+        //if (!published)
+        //    {
+        //        Log.info("Message 8FLJ829 not published");
+        //    }        
         return 0;
     }
     else
@@ -57,26 +57,57 @@ int ledToggle(String command)
         return -1;
     }
 }
+
 // Function called when the cloud tells us that an event is published.
 void myHandler(const char *event, const char *data)
 {
     if (strcmp(data, "SBH9905") == 0)
+    {
+        published = false;
+        while (!published)
         {
+            ledToggle("on");
             Log.info("Playing SBH9905");
+            delay( 5 * 1000 );
+            Log.info("Sending ball to 8FLJ829");
+            published = Particle.publish("ballStatus", "8FLJ829");
+            if (!published) 
+            {
+                Log.info("Fail publishing message to 8FLJ829");           
+            }
         }
-        else if (strcmp(data, "8FLJ829") == 0)
-        {
-            Log.info("Playing 8FLJ829");
-        }
-        else
-        {
-            Log.info("UNKNOWN OPTION in event");
-        }
+        ledToggle("off");
+        Log.info("Should be playing 8FLJ829");
+    }
+    else if (strcmp(data, "8FLJ829") == 0)
+    {
+        Log.info("Playing 8FLJ829");
+    }
+    else
+    {
+        Log.info("UNKNOWN OPTION in event");
+    }
 }
+
+int getBall(String command)
+{
+    bool play = false;
+    play = Particle.publish("ballStatus", "SBH9905");
+    if (!play)
+    {
+        return 1;
+    }
+    else
+    {
+        return -1;
+    }
+}
+
 // setup() runs once, when the device is first turned on
 void setup() {
     pinMode(MY_LED, OUTPUT);
     Particle.function("led", ledToggle);
+    Particle.function("ball", getBall);
     Particle.subscribe("ballStatus", myHandler);
 }
 
