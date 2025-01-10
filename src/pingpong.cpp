@@ -100,7 +100,7 @@ void setup() {
     Particle.function("ball", getBall);
     Particle.subscribe("ballStatus", myHandler);
 }
-
+//review how to use a state machine here
 // loop() runs over and over again, as quickly as it can execute.
 void loop() {
   // The core of your code will likely live here.

@@ -1,4 +1,5 @@
 # pingpong
+this app allow to 2 devices alternately blink a led. use a topic (event in particleio) to share the state.
 
 This firmware project was created using [Particle Developer Tools](https://www.particle.io/developer-tools/) and is compatible with all [Particle Devices](https://www.particle.io/devices/).
 
