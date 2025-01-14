@@ -25,13 +25,14 @@ jobs:
         with:
           # Set the particle-platform-name to the platform you're targeting.
           # Allowed values: core, photon, p1, electron, argon, boron, xenon, esomx, bsom, b5som, tracker, trackerm, p2, msom
-          particle-platform-name: 'p2'
+          particle-platform-name: 'electron'
+          device-os-version: 3.3.1
 
       # Optional: Upload compiled firmware as an artifact on GitHub.
       - name: Upload Firmware as Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: firmware-artifact
+          name: firmware-pingpong
           path: |
             ${{ steps.compile.outputs.firmware-path }}
             ${{ steps.compile.outputs.target-path }}
